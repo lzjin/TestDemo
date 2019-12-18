@@ -14,6 +14,9 @@ android {
             //选择要添加的对应cpu类型的.so库。
             abiFilters 'armeabi', 'armeabi-v7a', 'x86_64'
         }
+
+        // Enabling multidex support.
+        multiDexEnabled true
     }
 
 
@@ -40,8 +43,15 @@ dependencies {
 
     implementation 'com.jakewharton:butterknife:8.2.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.2.1'
+    //权限
+    implementation 'pub.devrel:easypermissions:2.0.1'
+    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.hjq:toast:8.0'
 
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
 
     implementation(name: 'qmf-ppplugin-android-3.0.5', ext: 'aar')
+
+
+    implementation 'com.android.support:multidex:1.0.3'
 }
