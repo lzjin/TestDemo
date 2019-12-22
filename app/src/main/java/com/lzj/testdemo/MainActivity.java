@@ -1,6 +1,7 @@
 package com.lzj.testdemo;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import com.chinaums.pppay.unify.UnifyPayPlugin;
 import com.chinaums.pppay.unify.UnifyPayRequest;
 import com.google.gson.Gson;
 import com.hjq.toast.ToastUtils;
+import com.lzj.testdemo.activity.DemoActivity;
 import com.lzj.testdemo.bean.WXPayBean;
 
 import java.util.List;
@@ -32,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     Button bt2;
     @BindView(R.id.bt3)
     Button bt3;
+    @BindView(R.id.bt4)
+    Button bt4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
 
-    @OnClick({R.id.bt1, R.id.bt2, R.id.bt3})
+    @OnClick({R.id.bt1, R.id.bt2, R.id.bt3,R.id.bt4})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.bt1:
@@ -54,6 +58,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 break;
             case R.id.bt3:
                 PayData( UnifyPayRequest.CHANNEL_UMSPAY);
+                break;
+            case R.id.bt4:
+                Intent intent = new Intent(this, DemoActivity.class);
+                startActivity(intent);
                 break;
         }
     }

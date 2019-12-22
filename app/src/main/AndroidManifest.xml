@@ -70,6 +70,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".activity.DemoActivity"/>
+
         <!--微信-->
         <activity
             android:name=".wxapi.WXPayEntryActivity"
