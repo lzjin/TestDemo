@@ -544,7 +544,7 @@ public class DemoActivity extends Activity implements UnifyPayListener {
     @Override
     public void onResult(String s, String s1) {
         //Log.d(TAG, "onResult resultCode=" + resultCode + ", resultInfo=" + resultInfo);
-        Log.i(TAG, "--------- s=" + s + ", s1=" + s1);
+        Log.i(TAG, "--------- s2=" + s + ", s1=" + s1);
     }
 
     /**
