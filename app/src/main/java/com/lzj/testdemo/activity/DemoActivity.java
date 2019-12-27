@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -31,7 +30,6 @@ import com.chinaums.pppay.unify.UnifyPayListener;
 import com.chinaums.pppay.unify.UnifyPayPlugin;
 import com.chinaums.pppay.unify.UnifyPayRequest;
 import com.lzj.testdemo.R;
-import com.lzj.testdemo.httpserver.ApiService;
 import com.lzj.testdemo.httpserver.RetrofitClientManager;
 import com.lzj.testdemo.model.PostonRequest;
 import com.lzj.testdemo.model.WXRequest;
@@ -56,7 +54,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
@@ -72,7 +69,6 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.ResponseBody;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -338,8 +334,8 @@ public class DemoActivity extends Activity implements UnifyPayListener {
                 divisionInfo.setText(divisionInfosArray.toString());
                 break;
             case R.id.btn_order_pay://网络请求
-                //new GetPrepayIdTask().execute();
-                httpRxPost();
+                new GetPrepayIdTask().execute();
+                // httpRxPost();
                 break;
         }
     }
@@ -878,6 +874,7 @@ public class DemoActivity extends Activity implements UnifyPayListener {
      * @param parms
      */
     private void payAliPay(String parms) {
+        Log.i("testz","--------------------支付宝启动参数"+parms);
         UnifyPayRequest msg = new UnifyPayRequest();
         msg.payChannel = UnifyPayRequest.CHANNEL_ALIPAY;
         msg.payData = parms;

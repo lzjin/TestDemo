@@ -47,17 +47,17 @@ dependencies {
     //权限
     implementation 'pub.devrel:easypermissions:2.0.1'
     implementation 'com.google.code.gson:gson:2.8.0'
-    implementation 'com.google.zxing:core:3.2.1'
-    implementation 'com.google.zxing:android-core:3.2.1'
+    //implementation 'com.google.zxing:core:3.2.1'
+    //implementation 'com.google.zxing:android-core:3.2.1'
 
-    implementation 'com.android.support:multidex:1.0.3'
+    //implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
 
     implementation(name: 'qmf-ppplugin-android-3.0.5', ext: 'aar')
 
     implementation 'de.akquinet.android.androlog:androlog-project:1.0.1'
     implementation 'org.apache.commons:commons-lang3:3.3'
-    implementation 'com.alibaba:fastjson:1.1.45'
+    //implementation 'com.alibaba:fastjson:1.1.45'
     implementation 'com.madgag:sc-light-jdk15on:1.47.0.2'
     implementation 'commons-codec:commons-codec:1.8'
 
