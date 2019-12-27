@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -30,6 +31,7 @@ import com.chinaums.pppay.unify.UnifyPayListener;
 import com.chinaums.pppay.unify.UnifyPayPlugin;
 import com.chinaums.pppay.unify.UnifyPayRequest;
 import com.lzj.testdemo.R;
+import com.lzj.testdemo.httpserver.ApiService;
 import com.lzj.testdemo.httpserver.RetrofitClientManager;
 import com.lzj.testdemo.model.PostonRequest;
 import com.lzj.testdemo.model.WXRequest;
@@ -54,6 +56,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
@@ -69,6 +72,7 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.ResponseBody;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -334,7 +338,7 @@ public class DemoActivity extends Activity implements UnifyPayListener {
                 divisionInfo.setText(divisionInfosArray.toString());
                 break;
             case R.id.btn_order_pay://网络请求
-                new GetPrepayIdTask().execute();
+               new GetPrepayIdTask().execute();
                 // httpRxPost();
                 break;
         }
@@ -540,7 +544,7 @@ public class DemoActivity extends Activity implements UnifyPayListener {
     @Override
     public void onResult(String s, String s1) {
         //Log.d(TAG, "onResult resultCode=" + resultCode + ", resultInfo=" + resultInfo);
-        Log.d(TAG, "--------- s=" + s + ", s1=" + s1);
+        Log.i(TAG, "--------- s=" + s + ", s1=" + s1);
     }
 
     /**
@@ -706,15 +710,16 @@ public class DemoActivity extends Activity implements UnifyPayListener {
                             Toast.makeText(DemoActivity.this, R.string.get_prepayid_succ, Toast.LENGTH_LONG).show();
                         }
 
-                        if (typetag == 0) {
-                            payUMSPay(json.getString("appPayRequest"));
-                        } else if (typetag == 1) {
-                            payWX(json.getString("appPayRequest"));
-                        } else if (typetag == 2) {
-                            payAliPay(json.getString("appPayRequest"));
-                        } else if (typetag == 3) {
-                            payCloudQuickPay(json.getString("appPayRequest"));
-                        }
+//                        if (typetag == 0) {
+//                            payUMSPay(json.getString("appPayRequest"));
+//                        } else if (typetag == 1) {
+//                            payWX(json.getString("appPayRequest"));
+//                        } else if (typetag == 2) {
+//                            payAliPay(json.getString("appPayRequest"));
+//                        } else if (typetag == 3) {
+//                            payCloudQuickPay(json.getString("appPayRequest"));
+//                        }
+                        payAllPay(json.getString("appPayRequest"));
                     } else {
                         String msg = String.format(getString(R.string.get_prepayid_fail), json.getString("errMsg"));
                         Toast.makeText(DemoActivity.this, msg, Toast.LENGTH_LONG)
@@ -737,58 +742,61 @@ public class DemoActivity extends Activity implements UnifyPayListener {
         @Override
         protected String doInBackground(Void... params) {
             String url = "https://qr.chinaums.com/netpay-route-server/api/";
-            if (mCurrentEnvironment == 0) {  //测试一环境
+            if (mCurrentEnvironment == 0) {//测试一环境
                 url = "https://qr-test1.chinaums.com/netpay-route-server/api/";//"https://qr-test1.chinaums.com/netpay-portal/test/tradeTest.do";//
-            } else if (mCurrentEnvironment == 1) {//测试二环境
+            }else if(mCurrentEnvironment == 1){//测试二环境
                 url = "https://qr-test2.chinaums.com/netpay-route-server/api/";//"http://umspay.izhong.me/netpay-route-server/api/";
-            } else if (mCurrentEnvironment == 2 && typetag != 0) {
+            }else if(mCurrentEnvironment == 2  && typetag != 0){
                 url = "https://mobl-test.chinaums.com/netpay-route-server/api/";
-            } else if (mCurrentEnvironment == 3) {
+            }else if(mCurrentEnvironment == 3){
                 url = "https://qr.chinaums.com/netpay-route-server/api/";
-            } else if (typetag == 0 && mCurrentEnvironment == 2) {
+            }else if(typetag == 0 && mCurrentEnvironment == 2){
                 url = "https://qr-test1.chinaums.com/netpay-route-server/api/";
             }
 
-            if (typetag == TYPE_WEIXIN && mCurrentEnvironment == 0) {
+            if(typetag == TYPE_WEIXIN && mCurrentEnvironment == 0){
                 url = "https://qr-test3.chinaums.com/netpay-route-server/api/";//url = "https://mobl-test.chinaums.com/netpay-route-server/api/";
             }
             //2018-07-11
-            if (typetag == TYPE_ALIPAY && mCurrentEnvironment == ENV_ALIPAY_UAT) {
+            if(typetag == TYPE_ALIPAY && mCurrentEnvironment == ENV_ALIPAY_UAT){
                 url = "https://qr-test5.chinaums.com/netpay-route-server/api/";
             }
 
             String entity = null;
             Log.d(TAG, "typetag:" + typetag);
-
-            if (typetag == 1) {
+            if(typetag == 1){
                 divisionInfosArray = new JSONArray();
                 entity = getWeiXinParams();
-            } else if (typetag == 0) {
+            }else if(typetag == 0){
                 entity = getPostParam();
-            } else if (typetag == 2) {
-                if (mCurrentEnvironment == ENV_ALIPAY_UAT) {
+            }else if(typetag == 2){
+                if(mCurrentEnvironment == ENV_ALIPAY_UAT){
                     entity = getAliPayUatParm();
-                } else {
+                }else {
                     entity = getAliPayParm();
                 }
-            } else if (typetag == 3) {
+            }else if(typetag == 3){
                 entity = getCloudQuickPayParm();
             }
 
             Log.d(TAG, "doInBackground, url = " + url);
             Log.d(TAG, "doInBackground, entity = " + entity);
 
-            //网络返回结果 转成byte 再字符
+
             byte[] buf = httpPost(url, entity);
-            if (buf == null || buf.length == 0) {
+            if (buf == null || buf.length == 0)
+            {
                 return null;
             }
             String content = new String(buf);
             Log.d(TAG, "doInBackground, content = " + content);
 //            result.parseFrom(content);
-            try {
+            try
+            {
                 return content;
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
                 Log.d(TAG, "doInBackground, Exception = " + e.getMessage());
@@ -862,6 +870,7 @@ public class DemoActivity extends Activity implements UnifyPayListener {
      * @param parms
      */
     private void payWX(String parms) {
+        Log.i("testz", "------------------微信 parms = " + parms);
         UnifyPayRequest msg = new UnifyPayRequest();
         msg.payChannel = UnifyPayRequest.CHANNEL_WEIXIN;
         msg.payData = parms;
@@ -874,11 +883,35 @@ public class DemoActivity extends Activity implements UnifyPayListener {
      * @param parms
      */
     private void payAliPay(String parms) {
-        Log.i("testz","--------------------支付宝启动参数"+parms);
+        Log.i("testz", "------------------支付宝 parms = " + parms);
         UnifyPayRequest msg = new UnifyPayRequest();
         msg.payChannel = UnifyPayRequest.CHANNEL_ALIPAY;
         msg.payData = parms;
         UnifyPayPlugin.getInstance(this).sendPayRequest(msg);
+    }
+    private void payAllPay(String parms) {
+        UnifyPayRequest msg = new UnifyPayRequest();
+        Log.i("testz", "------------------全 parms = " + parms);
+        if(typetag==1){
+            msg.payChannel = UnifyPayRequest.CHANNEL_WEIXIN;
+            msg.payData = parms;
+            UnifyPayPlugin.getInstance(this).sendPayRequest(msg);
+        }
+        else if(typetag==2){
+            msg.payChannel = UnifyPayRequest.CHANNEL_ALIPAY;
+            msg.payData = parms;
+            UnifyPayPlugin.getInstance(this).sendPayRequest(msg);
+        }
+        else if(typetag==3){
+            String tn = "空";
+            try {
+                JSONObject e = new JSONObject(parms);
+                tn = e.getString("tn");
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
+            UPPayAssistEx.startPay(this, null, null, tn, "00");
+        }
     }
 
     /**
@@ -887,6 +920,7 @@ public class DemoActivity extends Activity implements UnifyPayListener {
      * @param parms
      */
     private void payUMSPay(String parms) {
+        Log.i("testz", "------------------快捷支付 parms = " + parms);
         UnifyPayRequest msg = new UnifyPayRequest();
         msg.payChannel = UnifyPayRequest.CHANNEL_UMSPAY;
         msg.payData = parms;
@@ -899,6 +933,7 @@ public class DemoActivity extends Activity implements UnifyPayListener {
      * @param appPayRequest
      */
     private void payCloudQuickPay(String appPayRequest) {
+        Log.i("testz", "------------------云闪付支付 appPayRequest = " + appPayRequest);
         String tn = "空";
         try {
             JSONObject e = new JSONObject(appPayRequest);
@@ -907,7 +942,7 @@ public class DemoActivity extends Activity implements UnifyPayListener {
             e1.printStackTrace();
         }
         UPPayAssistEx.startPay(this, null, null, tn, "00");
-        Log.d("test", "云闪付支付 tn = " + tn);
+        Log.i("test", "云闪付支付 tn = " + tn);
     }
 
     /**
