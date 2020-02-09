@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+#云闪付
+-dontwarn com.unionpay.**
+-keep class com.unionpay.** { *; }
